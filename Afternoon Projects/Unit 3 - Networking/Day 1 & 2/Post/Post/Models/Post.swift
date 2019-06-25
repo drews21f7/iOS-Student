@@ -10,12 +10,12 @@ import Foundation
 
 struct Post: Codable {
     var text: String
-    var timeStamp: TimeInterval
-    var userName: String
+    var timestamp: TimeInterval
+    var username: String
     
-    init(text: String, timeStamp: TimeInterval = Date().timeIntervalSince1970, userName: String) {
+    init(text: String, timestamp: TimeInterval = Date().timeIntervalSince1970, username: String) {
         self.text = text
-        self.timeStamp = timeStamp
-        self.userName = userName
+        self.timestamp = timestamp
+        self.username = username
     }
 }

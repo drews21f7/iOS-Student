@@ -10,20 +10,7 @@ import UIKit
 
 class PostListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return postController.posts.count
-    }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "postCell", for: indexPath)
-        
-        let post = postController.posts[indexPath.row]
-        
-        cell.textLabel?.text = post.text
-        cell.detailTextLabel?.text = "\(post.userName) - \(Date(timeIntervalSince1970: post.timeStamp))"
-        
-        return cell
-    }
     
     let postController = PostController()
     
@@ -33,25 +20,28 @@ class PostListViewController: UIViewController, UITableViewDelegate, UITableView
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.refreshControl = refreshControl
         tableView.delegate = self
         tableView.dataSource = self
-        postController.fetchPosts {
-            self.reloadTableView()
-        }
         
         tableView.estimatedRowHeight = 45
         tableView.rowHeight = UITableView.automaticDimension
         
+        tableView.refreshControl = refreshControl
+        
         refreshControl.addTarget(self, action: #selector(refreshControlPulled), for: .valueChanged)
 
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        postController.fetchPosts {
+            self.reloadTableView()
+        }
         // Do any additional setup after loading the view.
     }
     
     @objc func refreshControlPulled() {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
         postController.fetchPosts {
-            DispatchQueue.main.async { self.refreshControl.endRefreshing()}
             self.reloadTableView()
+            DispatchQueue.main.async { self.refreshControl.endRefreshing()}
         }
         
         
@@ -63,15 +53,19 @@ class PostListViewController: UIViewController, UITableViewDelegate, UITableView
         }
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return postController.posts.count
     }
-    */
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "postCell", for: indexPath)
+        
+        let post = postController.posts[indexPath.row]
+        
+        cell.textLabel?.text = post.text
+        cell.detailTextLabel?.text = "\(post.username) - \(Date(timeIntervalSince1970: post.timestamp))"
+        
+        return cell
+    }
 
 }

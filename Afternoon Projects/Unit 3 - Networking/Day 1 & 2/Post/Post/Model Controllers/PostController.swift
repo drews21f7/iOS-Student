@@ -33,7 +33,7 @@ class PostController {
                 
                 let postsDictionary = try jDecoder.decode([String:Post].self, from: data)
                 var posts: [Post] = postsDictionary.compactMap({ $0.value})
-                posts.sort(by: { $0.timeStamp > $1.timeStamp })
+                posts.sort(by: { $0.timestamp > $1.timestamp })
                 self.posts = posts
                 completion()
             } catch {
@@ -43,5 +43,47 @@ class PostController {
             }
         }
         dataTask.resume()
+    }
+    
+    func addNewPostWith(username: String, text: String, completion: @escaping () -> ()) {
+        let post = Post(text: text, username: username)
+        var postData: Data
+        do{
+            let jEncoder = JSONEncoder()
+           postData = try jEncoder.encode(post)
+        } catch {
+            print (error)
+            completion()
+            return
+            
         }
+        
+        guard let url = baseURL else { completion(); return }
+        
+        let postEndpoint = url.appendingPathExtension("json")
+        
+        var request = URLRequest(url: postEndpoint)
+        request.httpMethod = "POST"
+        request.httpBody = postData
+        let dataTask = URLSession.shared.dataTask(with: request) { (data, _, error) in
+            if let error = error {
+                print (error)
+                completion()
+                return
+            }
+            guard let data = data,
+                let responseDataString = String(data: data, encoding: .utf8) else {
+                    NSLog("Data in nil. Unable to verify if data was able to be put to endpoint.")
+                    completion()
+                    return }
+            
+            NSLog(responseDataString)
+            
+            self.fetchPosts {
+                completion()
+            }
+            
+        }
+        dataTask.resume()
+    }
 }
