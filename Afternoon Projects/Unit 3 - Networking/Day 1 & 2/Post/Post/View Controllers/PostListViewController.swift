@@ -37,6 +37,10 @@ class PostListViewController: UIViewController, UITableViewDelegate, UITableView
         // Do any additional setup after loading the view.
     }
     
+    @IBAction func addButtonTapped(_ sender: Any) {
+        presentNewPostAlert()
+    }
+    
     @objc func refreshControlPulled() {
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
         postController.fetchPosts {
@@ -46,6 +50,40 @@ class PostListViewController: UIViewController, UITableViewDelegate, UITableView
         
         
     }
+    
+    func presentNewPostAlert() {
+        let alertContoller = UIAlertController(title: "New message", message: nil, preferredStyle: .alert)
+        
+        var userNameTextField = UITextField()
+        alertContoller.addTextField { (userName) in
+            userName.placeholder = "Enter username..."
+            userNameTextField = userName
+        }
+        
+        var messageTextField = UITextField()
+        alertContoller.addTextField { (message) in
+            message.placeholder = "Enter message..."
+            messageTextField = message
+        }
+        
+        let postAction = UIAlertAction(title: "Post", style: .default) { (postAction) in
+            guard let username = userNameTextField.text, !username.isEmpty,
+                let text = messageTextField.text, !text.isEmpty else {
+                    return
+            }
+            self.postController.addNewPostWith(username: username, text: text, completion: {
+                self.reloadTableView()
+            })
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        alertContoller.addAction(postAction)
+        alertContoller.addAction(cancelAction)
+        
+        self.present(alertContoller, animated: true, completion: nil)
+    }
+    
     func reloadTableView() {
         DispatchQueue.main.async {
             UIApplication.shared.isNetworkActivityIndicatorVisible = false

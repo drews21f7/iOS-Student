@@ -58,7 +58,13 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="5Q9-eP-HX7"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Title" id="pEG-rE-aQB"/>
+                    <navigationItem key="navigationItem" title="Title" id="pEG-rE-aQB">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="M1B-zG-rlR">
+                            <connections>
+                                <action selector="addButtonTapped:" destination="qeE-gl-NOx" id="22p-UC-5ex"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="O8z-aA-OQg" id="fci-RG-vD5"/>
                     </connections>
