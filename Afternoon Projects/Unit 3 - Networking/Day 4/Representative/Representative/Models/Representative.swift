@@ -8,6 +8,16 @@
 
 import Foundation
 
-struct Representative {
-    
+struct TopLevelDictionary: Codable {
+    let results: [Representative]
+}
+
+struct Representative: Codable {
+    let name: String
+    let party: String
+    let state: String
+    let district: String
+    let phone: String
+    let office: String
+    let link: String
 }
